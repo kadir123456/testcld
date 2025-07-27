@@ -1,21 +1,20 @@
-@@ .. @@
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 import time
 from collections import defaultdict, deque
 from typing import Dict, Deque
 import asyncio
-+import ipaddress
+import ipaddress
 from .config import settings
 
 class RateLimiter:
     def __init__(self):
         # Store request timestamps for each IP
         self.requests: Dict[str, Deque[float]] = defaultdict(deque)
-+        # Store blocked IPs temporarily
-+        self.blocked_ips: Dict[str, float] = {}
-+        # Store failed attempts
-+        self.failed_attempts: Dict[str, Deque[float]] = defaultdict(deque)
+        # Store blocked IPs temporarily
+        self.blocked_ips: Dict[str, float] = {}
+        # Store failed attempts
+        self.failed_attempts: Dict[str, Deque[float]] = defaultdict(deque)
         self.cleanup_task = None
         
     def is_allowed(self, identifier: str, max_requests: int = None, window_seconds: int = None) -> bool:
@@ -24,15 +23,15 @@ class RateLimiter:
         window_seconds = window_seconds or settings.RATE_LIMIT_WINDOW
         
         now = time.time()
-+        
-+        # Check if IP is temporarily blocked
-+        if identifier in self.blocked_ips:
-+            if now < self.blocked_ips[identifier]:
-+                return False
-+            else:
-+                # Unblock IP
-+                del self.blocked_ips[identifier]
-+        
+        
+        # Check if IP is temporarily blocked
+        if identifier in self.blocked_ips:
+            if now < self.blocked_ips[identifier]:
+                return False
+            else:
+                # Unblock IP
+                del self.blocked_ips[identifier]
+        
         window_start = now - window_seconds
         
         # Get request history for this identifier
@@ -44,54 +43,54 @@ class RateLimiter:
         
         # Check if limit exceeded
         if len(request_times) >= max_requests:
-+            # Block IP for 15 minutes after repeated violations
-+            self.blocked_ips[identifier] = now + 900  # 15 minutes
+            # Block IP for 15 minutes after repeated violations
+            self.blocked_ips[identifier] = now + 900  # 15 minutes
             return False
         
         # Add current request
         request_times.append(now)
         return True
     
-+    def record_failed_attempt(self, identifier: str):
-+        """Record a failed authentication attempt"""
-+        now = time.time()
-+        window_start = now - 3600  # 1 hour window
-+        
-+        failed_times = self.failed_attempts[identifier]
-+        
-+        # Remove old failed attempts
-+        while failed_times and failed_times[0] < window_start:
-+            failed_times.popleft()
-+        
-+        failed_times.append(now)
-+        
-+        # Block IP after 5 failed attempts in 1 hour
-+        if len(failed_times) >= 5:
-+            self.blocked_ips[identifier] = now + 3600  # Block for 1 hour
-+    
-+    def is_suspicious_ip(self, ip: str) -> bool:
-+        """Check if IP is suspicious (private ranges, localhost, etc.)"""
-+        try:
-+            ip_obj = ipaddress.ip_address(ip)
-+            # Allow localhost for development
-+            if settings.ENVIRONMENT == "development" and ip_obj.is_loopback:
-+                return False
-+            # Block private networks in production
-+            if settings.ENVIRONMENT == "production" and ip_obj.is_private:
-+                return True
-+            return False
-+        except ValueError:
-+            # Invalid IP format
-+            return True
+    def record_failed_attempt(self, identifier: str):
+        """Record a failed authentication attempt"""
+        now = time.time()
+        window_start = now - 3600  # 1 hour window
+        
+        failed_times = self.failed_attempts[identifier]
+        
+        # Remove old failed attempts
+        while failed_times and failed_times[0] < window_start:
+            failed_times.popleft()
+        
+        failed_times.append(now)
+        
+        # Block IP after 5 failed attempts in 1 hour
+        if len(failed_times) >= 5:
+            self.blocked_ips[identifier] = now + 3600  # Block for 1 hour
+    
+    def is_suspicious_ip(self, ip: str) -> bool:
+        """Check if IP is suspicious (private ranges, localhost, etc.)"""
+        try:
+            ip_obj = ipaddress.ip_address(ip)
+            # Allow localhost for development
+            if settings.ENVIRONMENT == "development" and ip_obj.is_loopback:
+                return False
+            # Block private networks in production
+            if settings.ENVIRONMENT == "production" and ip_obj.is_private:
+                return True
+            return False
+        except ValueError:
+            # Invalid IP format
+            return True
     
     def get_reset_time(self, identifier: str, window_seconds: int = None) -> int:
         """Get when the rate limit will reset for this identifier"""
         window_seconds = window_seconds or settings.RATE_LIMIT_WINDOW
-+        
-+        # Check if IP is blocked
-+        if identifier in self.blocked_ips:
-+            return int(self.blocked_ips[identifier] - time.time())
-+        
+        
+        # Check if IP is blocked
+        if identifier in self.blocked_ips:
+            return int(self.blocked_ips[identifier] - time.time())
+        
         request_times = self.requests.get(identifier, deque())
         
         if not request_times:
@@ -120,22 +119,22 @@ class RateLimiter:
                     if not request_times:
                         del self.requests[identifier]
                 
-+                # Clean up expired blocked IPs
-+                expired_blocks = [ip for ip, expire_time in self.blocked_ips.items() if now > expire_time]
-+                for ip in expired_blocks:
-+                    del self.blocked_ips[ip]
-+                
-+                # Clean up old failed attempts
-+                failed_window_start = now - 3600  # 1 hour
-+                for identifier in list(self.failed_attempts.keys()):
-+                    failed_times = self.failed_attempts[identifier]
-+                    
-+                    while failed_times and failed_times[0] < failed_window_start:
-+                        failed_times.popleft()
-+                    
-+                    if not failed_times:
-+                        del self.failed_attempts[identifier]
-+                
+                # Clean up expired blocked IPs
+                expired_blocks = [ip for ip, expire_time in self.blocked_ips.items() if now > expire_time]
+                for ip in expired_blocks:
+                    del self.blocked_ips[ip]
+                
+                # Clean up old failed attempts
+                failed_window_start = now - 3600  # 1 hour
+                for identifier in list(self.failed_attempts.keys()):
+                    failed_times = self.failed_attempts[identifier]
+                    
+                    while failed_times and failed_times[0] < failed_window_start:
+                        failed_times.popleft()
+                    
+                    if not failed_times:
+                        del self.failed_attempts[identifier]
+                
                 # Sleep for 5 minutes before next cleanup
                 await asyncio.sleep(300)
                 
@@ -169,13 +168,13 @@ async def rate_limit_middleware(request: Request, call_next):
     
     client_ip = get_client_ip(request)
     
-+    # Check for suspicious IPs
-+    if rate_limiter.is_suspicious_ip(client_ip) and settings.ENVIRONMENT == "production":
-+        return JSONResponse(
-+            status_code=403,
-+            content={"error": "Access denied", "message": "Suspicious IP address"}
-+        )
-+    
+    # Check for suspicious IPs
+    if rate_limiter.is_suspicious_ip(client_ip) and settings.ENVIRONMENT == "production":
+        return JSONResponse(
+            status_code=403,
+            content={"error": "Access denied", "message": "Suspicious IP address"}
+        )
+    
     # Different limits for different endpoints
     if request.url.path.startswith("/api/auth/"):
         # Stricter limits for auth endpoints
