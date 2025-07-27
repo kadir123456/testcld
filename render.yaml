@@ -2,10 +2,20 @@ services:
   - type: web
     name: ezyago-bot
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn src.main:app --host 0.0.0.0 --port $PORT
+    region: frankfurt
+    plan: starter
+    buildCommand: |
+      pip install --upgrade pip
+      pip install --no-cache-dir -r requirements.txt
+    startCommand: uvicorn src.main:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
       - key: ENVIRONMENT
         value: production
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+      - key: PIP_NO_CACHE_DIR
+        value: "1"
+      - key: PIP_DISABLE_PIP_VERSION_CHECK
+        value: "1"
