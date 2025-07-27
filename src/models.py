@@ -1,7 +1,6 @@
 @@ .. @@
 from pydantic import BaseModel, EmailStr
-from pydantic import validator
-+from pydantic import Field
+from pydantic import validator, Field
 from typing import Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -25,9 +24,9 @@ class BotStatus(str, Enum):
 
 # --- Request Models ---
 class UserRegister(BaseModel):
--    email: str
--    password: str
--    full_name: str
+    email: EmailStr
+    password: str
+    full_name: str
 +    email: EmailStr = Field(..., description="Valid email address")
 +    password: str = Field(..., min_length=6, max_length=128, description="Password must be 6-128 characters")
 +    full_name: str = Field(..., min_length=2, max_length=100, description="Full name must be 2-100 characters")
@@ -76,6 +75,14 @@ class PasswordReset(BaseModel):
     email: str
     
     @validator('email')
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v) < 1:
+            raise ValueError('Password is required')
+        if len(v) > 128:
+            raise ValueError('Password too long')
+        return v
     def validate_email(cls, v):
         import re
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
@@ -89,11 +96,13 @@ class PasswordResetConfirm(BaseModel):
 -    new_password: str
 +    token: str = Field(..., min_length=10, max_length=200)
 +    new_password: str = Field(..., min_length=6, max_length=128)
-+    
-+    @validator('token')
+    token: str
+    new_password: str
 +    def validate_token(cls, v):
 +        # Only allow alphanumeric and safe characters
 +        if not re.match(r'^[a-zA-Z0-9\-_]+$', v):
+        if len(v) < 10 or len(v) > 200:
+            raise ValueError('Invalid token length')
 +            raise ValueError('Invalid token format')
 +        return v
 +    
@@ -103,19 +112,23 @@ class PasswordResetConfirm(BaseModel):
 +            raise ValueError('Password must be at least 6 characters')
 +        if not re.search(r'[A-Za-z]', v) or not re.search(r'\d', v):
 +            raise ValueError('Password must contain at least one letter and one number')
+        if len(v) > 128:
+            raise ValueError('Password too long')
 +        return v
 
 class APIKeysUpdate(BaseModel):
 -    api_key: str
 -    api_secret: str
-+    api_key: str = Field(..., min_length=10, max_length=200)
-+    api_secret: str = Field(..., min_length=10, max_length=200)
+    api_key: str
+    api_secret: str
      is_testnet: bool = False
 +    
 +    @validator('api_key', 'api_secret')
 +    def validate_api_credentials(cls, v):
 +        # Remove any whitespace
 +        v = v.strip()
+        if len(v) < 10 or len(v) > 200:
+            raise ValueError('API credential length must be between 10-200 characters')
 +        # Only allow alphanumeric and safe characters for API keys
 +        if not re.match(r'^[a-zA-Z0-9]+$', v):
 +            raise ValueError('API credentials contain invalid characters')
@@ -124,14 +137,22 @@ class APIKeysUpdate(BaseModel):
 class BotControl(BaseModel):
 -    action: str  # "start" or "stop"
 -    symbol: Optional[str] = None
-+    action: str = Field(..., regex=r'^(start|stop)$')
-+    symbol: Optional[str] = Field(None, min_length=3, max_length=20)
+    action: str
+    symbol: Optional[str] = None
+    
+    @validator('action')
+    def validate_action(cls, v):
+        if v not in ['start', 'stop']:
+            raise ValueError('Action must be either "start" or "stop"')
+        return v
 +    
 +    @validator('symbol')
 +    def validate_symbol(cls, v):
 +        if v is None:
 +            return v
 +        v = v.upper().strip()
+        if len(v) < 3 or len(v) > 20:
+            raise ValueError('Symbol length must be between 3-20 characters')
 +        # Only allow valid trading pair format
 +        if not re.match(r'^[A-Z]{2,10}USDT$', v):
 +            raise ValueError('Invalid symbol format. Must be like BTCUSDT')
@@ -143,15 +164,45 @@ class BotSettings(BaseModel):
 -    stop_loss_percent: float = 4.0
 -    take_profit_percent: float = 8.0
 -    timeframe: str = "15m"
-+    order_size_usdt: float = Field(default=25.0, ge=10.0, le=1000.0)
-+    leverage: int = Field(default=10, ge=1, le=20)
-+    stop_loss_percent: float = Field(default=4.0, ge=1.0, le=10.0)
-+    take_profit_percent: float = Field(default=8.0, ge=2.0, le=20.0)
-+    timeframe: str = Field(default="15m", regex=r'^(1m|5m|15m|1h|4h)$')
+    order_size_usdt: float = 25.0
+    leverage: int = 10
+    stop_loss_percent: float = 4.0
+    take_profit_percent: float = 8.0
+    timeframe: str = "15m"
+    
+    @validator('order_size_usdt')
+    def validate_order_size(cls, v):
+        if v < 10.0 or v > 1000.0:
+            raise ValueError('Order size must be between 10-1000 USDT')
+        return v
+    
+    @validator('leverage')
+    def validate_leverage(cls, v):
+        if v < 1 or v > 20:
+            raise ValueError('Leverage must be between 1-20')
+        return v
+    
+    @validator('stop_loss_percent')
+    def validate_stop_loss(cls, v):
+        if v < 1.0 or v > 10.0:
+            raise ValueError('Stop loss must be between 1-10%')
+        return v
+    
+    @validator('take_profit_percent')
+    def validate_take_profit(cls, v):
+        if v < 2.0 or v > 20.0:
+            raise ValueError('Take profit must be between 2-20%')
+        return v
+    
+    @validator('timeframe')
+    def validate_timeframe(cls, v):
+        if v not in ['1m', '5m', '15m', '1h', '4h']:
+            raise ValueError('Timeframe must be one of: 1m, 5m, 15m, 1h, 4h')
+        return v
 
 class PaymentNotification(BaseModel):
 -    user_email: str
--    message: Optional[str] = None
+    message: Optional[str] = None
 +    user_email: EmailStr
 +    message: Optional[str] = Field(None, max_length=500)
 +    
