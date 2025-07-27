@@ -13,21 +13,35 @@ from datetime import datetime, timedelta
 import uuid
 +import secrets
 
+# Import our modules with error handling
+try:
+    from .config import settings
+    from .database import firebase_manager
+    from .auth import auth_manager, get_current_user, get_current_admin, get_active_user
+    from .models import *
+    from .middleware import SecurityMiddleware, LoggingMiddleware, ErrorHandlerMiddleware
+    from .rate_limiter import start_rate_limiter_cleanup
+    from .encryption import encryption_manager
+    from .bot_manager import bot_manager
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    # Fallback imports for deployment
+    import sys
+    sys.path.append('/opt/render/project/src')
+    from config import settings
+    from database import firebase_manager
+    from auth import auth_manager, get_current_user, get_current_admin, get_active_user
+    from models import *
+    from middleware import SecurityMiddleware, LoggingMiddleware, ErrorHandlerMiddleware
+    from rate_limiter import start_rate_limiter_cleanup
+    from encryption import encryption_manager
+    from bot_manager import bot_manager
 # Setup logging
 logging.basicConfig(
     level=getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-# Import our modules
-from .config import settings
-from .database import firebase_manager
-from .auth import auth_manager, get_current_user, get_current_admin, get_active_user
-from .models import *
-from .middleware import SecurityMiddleware, LoggingMiddleware, ErrorHandlerMiddleware
-from .rate_limiter import start_rate_limiter_cleanup
-from .encryption import encryption_manager
-from .bot_manager import bot_manager
 
 # Background tasks
 background_tasks = []
