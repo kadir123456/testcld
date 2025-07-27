@@ -1,0 +1,75 @@
+@@ .. @@
+ <!DOCTYPE html>
+ <html lang="tr">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
++    <meta name="theme-color" content="#6366f1">
++    <meta name="apple-mobile-web-app-capable" content="yes">
++    <meta name="apple-mobile-web-app-status-bar-style" content="default">
++    <meta name="apple-mobile-web-app-title" content="Ezyago">
+     <title>Ezyago - Akıllı Kripto Trading Botu</title>
+     <meta name="description" content="7/24 otomatik kripto trading botu. Binance Futures'da akıllı algoritmalarla güvenli ve karlı işlemler. 7 gün ücretsiz deneme!">
+     <meta name="keywords" content="kripto bot, trading bot, binance bot, otomatik trading, kripto para">
+     
+     <!-- Open Graph -->
+     <meta property="og:title" content="Ezyago - Akıllı Kripto Trading Botu">
+     <meta property="og:description" content="7/24 otomatik kripto trading botu. 7 gün ücretsiz deneme!">
+     <meta property="og:type" content="website">
+     <meta property="og:url" content="https://ezyago.com">
+     
+     <!-- Fonts -->
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+     
+     <!-- Icons -->
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+     
+     <!-- CSS -->
+     <link rel="stylesheet" href="/static/css/main.css">
+     
+     <!-- Favicon -->
+     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+ </head>
+ <body>
+     <!-- Loading Screen -->
+     <div id="loading-screen" class="loading-screen">
+         <div class="loading-spinner">
+             <div class="spinner"></div>
+             <p>Ezyago yükleniyor...</p>
+         </div>
+     </div>
+
+     <!-- Landing Page -->
+     <div id="landing-page">
+         <!-- Navigation -->
+         <nav class="navbar">
+             <div class="nav-container">
+                 <a href="/" class="nav-brand">
+                     <i class="fas fa-robot"></i>
+                     <span>Ezyago</span>
+                 </a>
+                 
+                 <div class="nav-menu">
+                     <a href="#features" class="nav-link">Özellikler</a>
+                     <a href="#pricing" class="nav-link">Fiyatlandırma</a>
+                     <a href="#faq" class="nav-link">SSS</a>
+                     <a href="/about" class="nav-link">Hakkımızda</a>
+                     <a href="/contact" class="nav-link">İletişim</a>
+                     <button class="btn btn-outline" onclick="showLoginModal()">
+                         <i class="fas fa-sign-in-alt"></i>
+                         Giriş Yap
+                     </button>
+                     <button class="btn btn-primary" onclick="showRegisterModal()">
+                         <i class="fas fa-user-plus"></i>
+                         Ücretsiz Başla
+                     </button>
+                 </div>
+                 
+-                <button class="nav-toggle">
++                <button class="nav-toggle" aria-label="Menüyü aç/kapat" aria-expanded="false">
+                     <span></span>
+                     <span></span>
+                     <span></span>
+                 </button>
+             </div>
+         </nav>
