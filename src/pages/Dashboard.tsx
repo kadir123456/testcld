@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { TrialStatus } from '../components/TrialStatus';
 import { ReferralSystem } from '../components/ReferralSystem';
 import { UpgradePrompt } from '../components/UpgradePrompt';
-import { TrendingUp, DollarSign, Clock, Package, Hammer, Eye, Shield, Gift, Wallet } from 'lucide-react';
+import { TrendingUp, DollarSign, Clock, Package, Hammer, Eye, Shield, Gift, Wallet, Gamepad2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getTotalBalance } from '../utils/miningCalculations';
 
@@ -57,6 +57,14 @@ export const Dashboard: React.FC = () => {
 
   const quickActions = [
     {
+      title: 'Aviator Game',
+      description: '🎮 Play crash game now!',
+      icon: Gamepad2,
+      color: 'bg-yellow-600/20 border-yellow-500/30 hover:bg-yellow-600/30',
+      iconColor: 'text-yellow-400',
+      link: '/game'
+    },
+    {
       title: 'Start Mining',
       description: 'Begin cryptocurrency mining',
       icon: Hammer,
@@ -84,8 +92,8 @@ export const Dashboard: React.FC = () => {
       title: 'Withdrawal',
       description: 'Withdraw funds',
       icon: DollarSign,
-      color: 'bg-yellow-600/20 border-yellow-500/30 hover:bg-yellow-600/30',
-      iconColor: 'text-yellow-400',
+      color: 'bg-red-600/20 border-red-500/30 hover:bg-red-600/30',
+      iconColor: 'text-red-400',
       link: '/withdrawal'
     }
   ];

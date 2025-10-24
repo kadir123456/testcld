@@ -1,0 +1,22 @@
+{
+  "name": "aviator-crash-game-backend",
+  "version": "1.0.0",
+  "description": "Aviator Crash Game - Real-time WebSocket Backend",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "firebase-admin": "^12.0.0",
+    "socket.io": "^4.7.2",
+    "uuid": "^13.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

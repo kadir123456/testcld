@@ -38,6 +38,7 @@ import { ProfilePage } from './pages/ProfilePage.tsx';
 import { AdminPage } from './pages/AdminPage.tsx';
 import { WithdrawalPage } from './pages/WithdrawalPage.tsx';
 import { SupportPage } from './pages/SupportPage.tsx';
+import { AviatorGame } from './pages/AviatorGame.tsx';
 
 
 function App() {
@@ -206,6 +207,17 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <SupportPage />
+                  </Layout>
+                </ProtectedRoute>
+              } 
+            />
+            
+            <Route 
+              path="/game" 
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <AviatorGame />
                   </Layout>
                 </ProtectedRoute>
               } 
