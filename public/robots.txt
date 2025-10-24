@@ -1,0 +1,46 @@
+# robots.txt for freecloudminer.com
+# Last Updated: October 13, 2025
+
+User-agent: *
+Allow: /
+
+# Block dashboard and all protected routes
+Disallow: /dashboard/
+Disallow: /dashboard
+Disallow: /admin/
+Disallow: /admin
+Disallow: /profile/
+Disallow: /profile
+Disallow: /withdrawal/
+Disallow: /withdrawal
+Disallow: /support/
+Disallow: /support
+
+# Block protected mining and packages pages (dashboard routes)
+Disallow: /mining
+Disallow: /packages
+
+# Allow public mining-related pages
+Allow: /mining-packages
+Allow: /how-mining-works
+
+# Allow all high-volume SEO pages
+Allow: /genesis
+Allow: /binance
+Allow: /coinmarketcap
+Allow: /coinbase
+Allow: /btc-usd
+Allow: /ethereum
+Allow: /dogecoin
+Allow: /litecoin
+
+# Allow public pages
+Allow: /calculator
+Allow: /news
+Allow: /market
+Allow: /blog
+Allow: /about
+Allow: /contact
+
+# Sitemap
+Sitemap: https://www.freecloudminer.com/sitemap.xml

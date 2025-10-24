@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+
+  <!-- Ana Sayfa - BITCOIN MINING OPTIMIZED -->
+  <url>
+    <loc>https://www.freecloudminer.com/</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- HIGH-VOLUME SEO PAGES - Bitcoin Mining Focus -->
+  
+  <!-- Bitcoin Mining Page -->
+  <url>
+    <loc>https://www.freecloudminer.com/how-mining-works</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Bitcoin Mining Calculator -->
+  <url>
+    <loc>https://www.freecloudminer.com/calculator</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  
+  <!-- Binance Mining (1M arama) -->
+  <url>
+    <loc>https://www.freecloudminer.com/binance</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- CoinMarketCap (750K arama) -->
+  <url>
+    <loc>https://www.freecloudminer.com/coinmarketcap</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Coinbase Mining (700K arama) -->
+  <url>
+    <loc>https://www.freecloudminer.com/coinbase</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Genesis Mining (200K arama) -->
+  <url>
+    <loc>https://www.freecloudminer.com/genesis</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- BTC USD (200K arama) -->
+  <url>
+    <loc>https://www.freecloudminer.com/btc-usd</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Cryptocurrency Mining Pages -->
+  
+  <!-- Ethereum Miner -->
+  <url>
+    <loc>https://www.freecloudminer.com/ethereum</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Dogecoin Mining -->
+  <url>
+    <loc>https://www.freecloudminer.com/dogecoin</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Litecoin Mining -->
+  <url>
+    <loc>https://www.freecloudminer.com/litecoin</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Hakkımızda -->
+  <url>
+    <loc>https://www.freecloudminer.com/about</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- İletişim -->
+  <url>
+    <loc>https://www.freecloudminer.com/contact</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog Ana Sayfası -->
+  <url>
+    <loc>https://www.freecloudminer.com/blog</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Mining Calculator -->
+  <url>
+    <loc>https://www.freecloudminer.com/calculator</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Crypto News -->
+  <url>
+    <loc>https://www.freecloudminer.com/news</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Market Data -->
+  <url>
+    <loc>https://www.freecloudminer.com/market</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- How Mining Works -->
+  <url>
+    <loc>https://www.freecloudminer.com/how-mining-works</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Mining Packages -->
+  <url>
+    <loc>https://www.freecloudminer.com/mining-packages</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Blog Yazıları -->
+  <url>
+    <loc>https://www.freecloudminer.com/blog/instant-bitcoin-mining-2025</loc>
+    <lastmod>2025-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/best-cloud-mining-platforms-2025</loc>
+    <lastmod>2025-10-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/bitcoin-cloud-mining-free-2025</loc>
+    <lastmod>2025-10-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/online-cloud-mining-free-2025</loc>
+    <lastmod>2025-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/2025-kripto-para-madenciligi-rehberi-yeni-baslayanlar-icin</loc>
+    <lastmod>2025-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/bitcoin-madenciligi-karlilik-hesaplama-rehberi</loc>
+    <lastmod>2025-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/cloud-mining-guvenlik-rehberi-dolandiricliktan-korunma</loc>
+    <lastmod>2025-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/ethereum-2-0-staking-yeni-madencilik-donemi</loc>
+    <lastmod>2025-03-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/altcoin-madenciligi-bitcoin-disi-secenekler</loc>
+    <lastmod>2025-03-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/mining-donanimlari-2025-gpu-asic-cloud-mining-karsilastirma</loc>
+    <lastmod>2025-03-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/kripto-para-vergi-rehberi-madencilik-geliri-beyan</loc>
+    <lastmod>2025-03-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/defi-staking-vs-geleneksel-madencilik-karlilik-karsilastirma</loc>
+    <lastmod>2025-02-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/blockchain-teknolojisi-temelleri-madencilik-bilimi</loc>
+    <lastmod>2025-02-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freecloudminer.com/blog/kripto-para-piyasa-analizi-2025-madencilik-trendleri</loc>
+    <lastmod>2025-02-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
