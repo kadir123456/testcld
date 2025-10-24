@@ -15,7 +15,9 @@ export const AdminPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [supportTickets, setSupportTickets] = useState<SupportTicket[]>([]);
   const [referralBonuses, setReferralBonuses] = useState<ReferralBonus[]>([]);
-  const [activeTab, setActiveTab] = useState<'payments' | 'withdrawals' | 'users' | 'support' | 'referrals'>('payments');
+  const [activeTab, setActiveTab] = useState<'payments' | 'withdrawals' | 'users' | 'support' | 'referrals' | 'game'>('payments');
+  const [gameDeposits, setGameDeposits] = useState<any[]>([]);
+  const [gameWithdrawals, setGameWithdrawals] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   
   // Bakiye düzenleme modal state'leri
@@ -98,12 +100,38 @@ export const AdminPage: React.FC = () => {
       }
     });
 
+    // Load game deposits
+    const gameDepositsRef = ref(database, 'gameDeposits');
+    const gameDepositsUnsubscribe = onValue(gameDepositsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const deposits = Object.entries(snapshot.val()).map(([key, value]: [string, any]) => ({
+          id: key,
+          ...value
+        }));
+        setGameDeposits(deposits.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      }
+    });
+
+    // Load game withdrawals
+    const gameWithdrawalsRef = ref(database, 'gameWithdrawals');
+    const gameWithdrawalsUnsubscribe = onValue(gameWithdrawalsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const withdrawals = Object.entries(snapshot.val()).map(([key, value]: [string, any]) => ({
+          id: key,
+          ...value
+        }));
+        setGameWithdrawals(withdrawals.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      }
+    });
+
     return () => {
       paymentsUnsubscribe();
       withdrawalsUnsubscribe();
       usersUnsubscribe();
       supportUnsubscribe();
       referralUnsubscribe();
+      gameDepositsUnsubscribe();
+      gameWithdrawalsUnsubscribe();
     };
   }, [user]);
 
@@ -362,6 +390,74 @@ export const AdminPage: React.FC = () => {
     setLoading(false);
   };
 
+  const handleGameDepositApproval = async (depositId: string, approved: boolean) => {
+    setLoading(true);
+    try {
+      const deposit = gameDeposits.find(d => d.id === depositId);
+      if (!deposit) return;
+
+      // Update deposit status
+      await set(ref(database, `gameDeposits/${depositId}`), {
+        ...deposit,
+        status: approved ? 'approved' : 'rejected',
+        processedAt: new Date().toISOString(),
+        processedBy: user?.uid
+      });
+
+      if (approved) {
+        // Add balance to user's game balance
+        const userRef = ref(database, `users/${deposit.userId}`);
+        const userSnapshot = await get(userRef);
+        
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.val();
+          await update(userRef, {
+            gameBalance: (userData.gameBalance || 0) + deposit.amount
+          });
+        }
+      }
+
+      toast.success(`Game deposit ${approved ? 'approved' : 'rejected'}`);
+    } catch (error) {
+      toast.error('Failed to process game deposit');
+    }
+    setLoading(false);
+  };
+
+  const handleGameWithdrawalApproval = async (withdrawalId: string, approved: boolean) => {
+    setLoading(true);
+    try {
+      const withdrawal = gameWithdrawals.find(w => w.id === withdrawalId);
+      if (!withdrawal) return;
+
+      // Update withdrawal status
+      await set(ref(database, `gameWithdrawals/${withdrawalId}`), {
+        ...withdrawal,
+        status: approved ? 'approved' : 'rejected',
+        processedAt: new Date().toISOString(),
+        processedBy: user?.uid
+      });
+
+      if (!approved) {
+        // Refund balance if rejected
+        const userRef = ref(database, `users/${withdrawal.userId}`);
+        const userSnapshot = await get(userRef);
+        
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.val();
+          await update(userRef, {
+            gameBalance: (userData.gameBalance || 0) + withdrawal.amount
+          });
+        }
+      }
+
+      toast.success(`Game withdrawal ${approved ? 'approved' : 'rejected'}`);
+    } catch (error) {
+      toast.error('Failed to process game withdrawal');
+    }
+    setLoading(false);
+  };
+
   const banUser = async (userId: string, reason: string) => {
     setLoading(true);
     try {
@@ -506,10 +602,11 @@ export const AdminPage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-1 bg-gray-800/50 p-1 rounded-lg">
+      <div className="flex flex-wrap space-x-1 bg-gray-800/50 p-1 rounded-lg">
         {[
           { id: 'payments', label: 'Ödeme Bildirimleri' },
           { id: 'withdrawals', label: 'Para Çekme Talepleri' },
+          { id: 'game', label: 'Oyun Yönetimi' },
           { id: 'users', label: 'Kullanıcı Yönetimi' },
           { id: 'support', label: 'Destek Talepleri' },
           { id: 'referrals', label: 'Referans Sistemi' }
@@ -517,7 +614,7 @@ export const AdminPage: React.FC = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 px-2 md:px-4 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === tab.id
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-400 hover:text-white'
@@ -732,6 +829,133 @@ export const AdminPage: React.FC = () => {
                 );
               })
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Game Management */}
+      {activeTab === 'game' && (
+        <div className="space-y-6">
+          {/* Game Deposits */}
+          <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
+            <h3 className="text-xl font-semibold text-white mb-6">Game Deposits (USDT)</h3>
+            <div className="space-y-4">
+              {gameDeposits.length === 0 ? (
+                <p className="text-gray-400 text-center py-8">No game deposits</p>
+              ) : (
+                gameDeposits.map((deposit) => {
+                  const depositUser = users.find(u => u.uid === deposit.userId);
+                  return (
+                    <div key={deposit.id} className="bg-gray-700/50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Mail className="h-4 w-4 text-blue-400" />
+                            <p className="text-white font-medium">{deposit.userEmail || depositUser?.email || 'Unknown'}</p>
+                          </div>
+                          <p className="text-white font-medium">Amount: ${deposit.amount} USDT</p>
+                          <p className="text-sm text-gray-400 break-all">TX Hash: {deposit.txHash}</p>
+                          <p className="text-sm text-gray-400">
+                            Date: {format(new Date(deposit.createdAt), 'dd MMM yyyy HH:mm')}
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            deposit.status === 'pending' ? 'bg-yellow-600/20 text-yellow-400' :
+                            deposit.status === 'approved' ? 'bg-green-600/20 text-green-400' :
+                            'bg-red-600/20 text-red-400'
+                          }`}>
+                            {getStatusText(deposit.status)}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {deposit.status === 'pending' && (
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleGameDepositApproval(deposit.id, true)}
+                            disabled={loading}
+                            className="flex items-center space-x-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
+                          >
+                            <Check className="h-4 w-4" />
+                            <span>Approve</span>
+                          </button>
+                          <button
+                            onClick={() => handleGameDepositApproval(deposit.id, false)}
+                            disabled={loading}
+                            className="flex items-center space-x-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm disabled:opacity-50"
+                          >
+                            <X className="h-4 w-4" />
+                            <span>Reject</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* Game Withdrawals */}
+          <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
+            <h3 className="text-xl font-semibold text-white mb-6">Game Withdrawals (USDT)</h3>
+            <div className="space-y-4">
+              {gameWithdrawals.length === 0 ? (
+                <p className="text-gray-400 text-center py-8">No game withdrawals</p>
+              ) : (
+                gameWithdrawals.map((withdrawal) => {
+                  const withdrawalUser = users.find(u => u.uid === withdrawal.userId);
+                  return (
+                    <div key={withdrawal.id} className="bg-gray-700/50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Mail className="h-4 w-4 text-blue-400" />
+                            <p className="text-white font-medium">{withdrawal.userEmail || withdrawalUser?.email || 'Unknown'}</p>
+                          </div>
+                          <p className="text-white font-medium">Amount: ${withdrawal.amount} USDT</p>
+                          <p className="text-sm text-gray-400 break-all">Wallet: {withdrawal.walletAddress}</p>
+                          <p className="text-sm text-gray-400">
+                            Date: {format(new Date(withdrawal.createdAt), 'dd MMM yyyy HH:mm')}
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            withdrawal.status === 'pending' ? 'bg-yellow-600/20 text-yellow-400' :
+                            withdrawal.status === 'approved' ? 'bg-green-600/20 text-green-400' :
+                            'bg-red-600/20 text-red-400'
+                          }`}>
+                            {getStatusText(withdrawal.status)}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {withdrawal.status === 'pending' && (
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleGameWithdrawalApproval(withdrawal.id, true)}
+                            disabled={loading}
+                            className="flex items-center space-x-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
+                          >
+                            <Check className="h-4 w-4" />
+                            <span>Approve</span>
+                          </button>
+                          <button
+                            onClick={() => handleGameWithdrawalApproval(withdrawal.id, false)}
+                            disabled={loading}
+                            className="flex items-center space-x-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm disabled:opacity-50"
+                          >
+                            <X className="h-4 w-4" />
+                            <span>Reject (Refund)</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
       )}
